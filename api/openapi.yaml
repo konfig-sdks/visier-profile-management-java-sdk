@@ -1,0 +1,1308 @@
+openapi: 3.0.3
+info:
+  description: Visier APIs for managing the profiles assigned to users
+  license:
+    name: "Apache License, Version 2.0"
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  title: Visier Profile Management APIs
+  version: 22222222.99201.1200
+  x-api-status-urls: false
+  x-konfig-has-globally-required-security: true
+servers:
+- url: "https://{vanity-name}.api.visier.io"
+  variables:
+    vanity-name:
+      default: vanity
+security:
+- ApiKeyAuth: []
+  BearerAuth: []
+- ApiKeyAuth: []
+  CookieAuth: []
+- ApiKeyAuth: []
+  OAuth2Auth: []
+tags:
+- name: ProfileManagement
+paths:
+  /v1/admin/profiles:
+    get:
+      description: |-
+        This API allows you to get a list of all available profiles. For administrating tenants,
+         this retrieves all administrating tenant profiles.
+      operationId: ProfileManagement_GetAllProfiles
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilesGetAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve a list of all profiles
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-profiles
+      x-accepts: application/json
+  /v1/admin/profiles/accessible-tenants:
+    get:
+      description: |-
+        This API allows you to retrieve a list of profiles available for analytic tenants.
+
+         Note: Administrating tenants only.
+      operationId: ProfileManagement_GetAnalyticProfiles
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfilesGetAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve a list of analytic tenant profiles
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-profiles-accessible-tenants
+      x-accepts: application/json
+  /v1/admin/profiles/accessible-tenants/{profileId}:
+    get:
+      description: |-
+        This API allows you to get the details of an analytic tenant profile.
+
+         Note: Administrating tenants only.
+      operationId: ProfileManagement_GetAnalyticProfileDetail
+      parameters:
+      - description: The ID of the profile to retrieve details for.
+        explode: false
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileGetAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve the details of an analytic tenant profile
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-profiles-accessible-tenants-profileId
+      x-accepts: application/json
+  /v1/admin/profiles/accessible-tenants/{profileId}/assign:
+    put:
+      description: |-
+        This API allows you to assign an analytic tenant profile to a list of administrating tenant users
+         for a list of analytic tenants.
+
+         Note:
+          - Administrating tenants only.
+          - You can revoke a profile from a user with this request by updating the validityEndTime to be
+            "less than" the current time (that is, in the past).
+      operationId: ProfileManagement_AssignAnalyticProfile
+      parameters:
+      - description: The ID of the profile to assign.
+        explode: false
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessibleTenantProfileAssignmentRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessibleTenantProfileAssignmentResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Assign an analytic tenant profile to administrating tenant users
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-put--v1-admin-profiles-accessible-tenants-profileId-assign
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/profiles/accessible-tenants/{profileId}/remove:
+    delete:
+      description: |-
+        This API allows you to remove an analytic tenant profile from a list of administrating tenant users for a list of analytic tenants.
+
+         Note: Administrating tenants only.
+      operationId: ProfileManagement_RemoveAnalyticProfile
+      parameters:
+      - description: The ID of the profile to remove.
+        explode: false
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessibleTenantProfileRevokeRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessibleTenantProfileRevokeResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Remove an analytic tenant profile from administrating tenant users
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--v1-admin-profiles-accessible-tenants-profileId-remove
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/profiles/{profileId}:
+    get:
+      description: |-
+        This API allows you to get the details of a specific profile. For administrating tenants, this retrieves
+         the details of administrating tenant profiles.
+      operationId: ProfileManagement_GetProfileDetail
+      parameters:
+      - description: The ID of the profile to retrieve details for.
+        explode: false
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileGetAPIResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve the details of a profile
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-profiles-profileId
+      x-accepts: application/json
+  /v1/admin/profiles/{profileId}/assign:
+    put:
+      description: |-
+        This API allows you to assign a profile to a list of users. For administrating tenants,
+         this assigns an administrating tenant profile to a list of users.
+      operationId: ProfileManagement_AssignProfile
+      parameters:
+      - description: The ID of the profile to assign to a list of users.
+        explode: false
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocalTenantProfileAssignmentRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalTenantProfileAssignmentResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Assign a profile to a list of users
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-put--v1-admin-profiles-profileId-assign
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/profiles/{profileId}/remove:
+    delete:
+      description: |-
+        This API allows you to remove a profile from a list of users. For administrating tenants, this
+         removes an administrating tenant profile from a list of users.
+      operationId: ProfileManagement_RemoveProfile
+      parameters:
+      - description: The ID of the profile to remove to a list of users.
+        explode: false
+        in: path
+        name: profileId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocalTenantProfileRevokeRequestDTO'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalTenantProfileRevokeResponseDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Remove a profile from a list of users
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-delete--v1-admin-profiles-profileId-remove
+      x-content-type: application/json
+      x-accepts: application/json
+  /v1/admin/users/{userId}/accessible-tenant-profiles:
+    get:
+      description: |-
+        This API allows you to retrieve a specified user's assigned profiles for analytic tenants.
+
+         Note: Administrating tenants only.
+      operationId: ProfileManagement_GetAnalyticUserProfile
+      parameters:
+      - description: The ID of the user you want to retrieve.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllProfileAssignedForAccessibleTenantDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve an administrating tenant user's analytic tenant profiles
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users-userId-accessible-tenant-profiles
+      x-accepts: application/json
+  /v1/admin/users/{userId}/profiles:
+    get:
+      description: |-
+        This API allows you to retrieve a specified user's assigned profiles. For administrating tenants,
+         this retrieves a user's administrating tenant profiles.
+      operationId: ProfileManagement_GetUserProfile
+      parameters:
+      - description: The ID of the user you want to retrieve.
+        explode: false
+        in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllProfileAssignedForLocalTenantDTO'
+          description: OK
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+          description: Default error response
+      summary: Retrieve a user's profiles
+      tags:
+      - ProfileManagement
+      x-konfig-operation-can-have-single-parameter: true
+      x-konfig-single-parameter-schema: konfig-generated-schema-single-parameter-schema-get--v1-admin-users-userId-profiles
+      x-accepts: application/json
+components:
+  schemas:
+    AccessibleTenantProfileAssignmentRequestDTO:
+      example:
+        targetUserIds:
+        - targetUserIds
+        - targetUserIds
+        validityEndTime: validityEndTime
+        validityStartTime: validityStartTime
+        targetTenantCodes:
+        - tenantCode: tenantCode
+          forAllChildren: true
+        - tenantCode: tenantCode
+          forAllChildren: true
+      properties:
+        targetUserIds:
+          description: A list of users to assign this profile.
+          items:
+            type: string
+          type: array
+        targetTenantCodes:
+          description: A list of objects representing the  analytic tenants for profiles
+            assigned to the users.
+          items:
+            $ref: '#/components/schemas/TargetTenantCodeDTO'
+          type: array
+        validityStartTime:
+          description: An inclusive date-time when this profile is active.
+          type: string
+        validityEndTime:
+          description: An exclusive date-time when this profile is no longer active.
+          type: string
+      type: object
+    AccessibleTenantProfileAssignmentResponseDTO:
+      example:
+        failedAssignments:
+        - tenantCode: tenantCode
+          error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          userId: userId
+          forAllChildren: true
+        - tenantCode: tenantCode
+          error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          userId: userId
+          forAllChildren: true
+        successfulAssignments:
+        - tenantCode: tenantCode
+          userId: userId
+          forAllChildren: true
+        - tenantCode: tenantCode
+          userId: userId
+          forAllChildren: true
+        badTenantCodes:
+        - tenantCode: tenantCode
+          error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          forAllChildren: true
+        - tenantCode: tenantCode
+          error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          forAllChildren: true
+        badUserIds:
+        - error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          userId: userId
+        - error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          userId: userId
+        errors: true
+      properties:
+        errors:
+          description: "If true, an error is generated by the request."
+          type: boolean
+        badTenantCodes:
+          description: A list of objects representing any tenants that returned errors.
+          items:
+            $ref: '#/components/schemas/TenantCodeErrorDTO'
+          type: array
+        badUserIds:
+          description: A list of objects representing the user IDs that may not be
+            valid.
+          items:
+            $ref: '#/components/schemas/UserIdErrorDTO'
+          type: array
+        failedAssignments:
+          description: A list of objects representing any errors during the assignment
+            operation.
+          items:
+            $ref: '#/components/schemas/FailedAccessibleTenantProfileAssignmentDTO'
+          type: array
+        successfulAssignments:
+          description: A list of user IDs that were successfully assigned the profiles.
+          items:
+            $ref: '#/components/schemas/SuccessfulAccessibleTenantProfileAssignmentDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    AccessibleTenantProfileRevokeRequestDTO:
+      example:
+        targetUserIds:
+        - targetUserIds
+        - targetUserIds
+        targetTenantCodes:
+        - tenantCode: tenantCode
+          forAllChildren: true
+        - tenantCode: tenantCode
+          forAllChildren: true
+      properties:
+        targetUserIds:
+          description: A list of users to remove this profile from.
+          items:
+            type: string
+          type: array
+        targetTenantCodes:
+          description: A list of objects representing the  analytic tenants for removing
+            profiles from each target user ID.
+          items:
+            $ref: '#/components/schemas/TargetTenantCodeDTO'
+          type: array
+      type: object
+    AccessibleTenantProfileRevokeResponseDTO:
+      example:
+        badTenantCodes:
+        - tenantCode: tenantCode
+          error:
+            errorMessage: errorMessage
+          forAllChildren: true
+        - tenantCode: tenantCode
+          error:
+            errorMessage: errorMessage
+          forAllChildren: true
+        badUserIds:
+        - error:
+            errorMessage: errorMessage
+          userId: userId
+        - error:
+            errorMessage: errorMessage
+          userId: userId
+        unaffectedUsers:
+        - userId: userId
+        - userId: userId
+        succeeded:
+        - userId: userId
+        - userId: userId
+      properties:
+        badTenantCodes:
+          description: A list of objects representing any tenants that returned errors.
+          items:
+            $ref: '#/components/schemas/ReducedTenantCodeErrorDTO'
+          type: array
+        badUserIds:
+          description: A list of objects representing the user IDs that may not be
+            valid.
+          items:
+            $ref: '#/components/schemas/ReducedUserIdErrorDTO'
+          type: array
+        unaffectedUsers:
+          description: A list of objects representing the valid user IDs that were
+            not affected.
+          items:
+            $ref: '#/components/schemas/SuccessfulLocalTenantProfileAssignmentDTO'
+          type: array
+        succeeded:
+          description: A list of objects representing the valid user IDs that succeeded.
+          items:
+            $ref: '#/components/schemas/SuccessfulLocalTenantProfileAssignmentDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    AdditionalCapabilitiesDTO:
+      example:
+        additionalCapabilities:
+        - additionalCapabilities
+        - additionalCapabilities
+      properties:
+        additionalCapabilities:
+          description: The additional capabilities assigned to this profile.
+          items:
+            type: string
+          type: array
+      type: object
+    AllProfileAssignedForAccessibleTenantDTO:
+      example:
+        assignedProfilesForAccessibleTenant:
+        - profileId: profileId
+          displayName: displayName
+          validityEndTime: validityEndTime
+          validityStartTime: validityStartTime
+          tenantCode: tenantCode
+          forAllChildren: true
+        - profileId: profileId
+          displayName: displayName
+          validityEndTime: validityEndTime
+          validityStartTime: validityStartTime
+          tenantCode: tenantCode
+          forAllChildren: true
+      properties:
+        assignedProfilesForAccessibleTenant:
+          description: A list of objects representing the user profiles assigned to
+            the user and their validity range.
+          items:
+            $ref: '#/components/schemas/ProfileAssignedForAccessibleTenantDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    AllProfileAssignedForLocalTenantDTO:
+      example:
+        assignedProfiles:
+        - capabilities:
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          profileId: profileId
+          displayName: displayName
+          validityEndTime: validityEndTime
+          validityStartTime: validityStartTime
+          additionalCapabilities:
+            additionalCapabilities:
+            - additionalCapabilities
+            - additionalCapabilities
+        - capabilities:
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          profileId: profileId
+          displayName: displayName
+          validityEndTime: validityEndTime
+          validityStartTime: validityStartTime
+          additionalCapabilities:
+            additionalCapabilities:
+            - additionalCapabilities
+            - additionalCapabilities
+      properties:
+        assignedProfiles:
+          description: A list of objects representing the user profiles assigned to
+            the user and their validity range.
+          items:
+            $ref: '#/components/schemas/ProfileAssignedForLocalTenantDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    CapabilitiesDTO:
+      example:
+        capability: capability
+        accessLevel: accessLevel
+        viewLevel: viewLevel
+      properties:
+        capability:
+          description: The name of the capability.
+          type: string
+        accessLevel:
+          description: The access level of the profile for the given capability.
+          type: string
+        viewLevel:
+          description: The view level of the profile for the given capability.
+          type: string
+      type: object
+    ErrorDTO:
+      example:
+        rootCauseId: rootCauseId
+        errorMessage: errorMessage
+        errorCode: errorCode
+      properties:
+        rootCauseId:
+          description: The root cause identifier that allows Visier to determine the
+            source of the problem.
+          type: string
+        errorCode:
+          description: A brief identifier of the type of error.
+          type: string
+        errorMessage:
+          description: A description of the error that occurred.
+          type: string
+      type: object
+    FailedAccessibleTenantProfileAssignmentDTO:
+      example:
+        tenantCode: tenantCode
+        error:
+          rootCauseId: rootCauseId
+          errorMessage: errorMessage
+          errorCode: errorCode
+        userId: userId
+        forAllChildren: true
+      properties:
+        userId:
+          description: The impacted user ID.
+          type: string
+        tenantCode:
+          description: The tenant code.
+          type: string
+        forAllChildren:
+          description: "If true, the target assignment is for all analytic tenants."
+          type: boolean
+        error:
+          $ref: '#/components/schemas/ErrorDTO'
+      type: object
+      x-konfig-properties:
+        error:
+          description: The details about the error.
+    FailedLocalTenantProfileAssignmentDTO:
+      example:
+        error:
+          rootCauseId: rootCauseId
+          errorMessage: errorMessage
+          errorCode: errorCode
+        userId: userId
+      properties:
+        userId:
+          description: The impacted user ID.
+          type: string
+        error:
+          $ref: '#/components/schemas/ErrorDTO'
+      type: object
+      x-konfig-properties:
+        error:
+          description: The details about the error.
+    FailedLocalTenantProfileRevokeDTO:
+      example:
+        message: message
+        userId: userId
+      properties:
+        userId:
+          description: The impacted user ID.
+          type: string
+        message:
+          description: The details about the error.
+          type: string
+      type: object
+    GoogleProtobufAny:
+      additionalProperties: true
+      description: Contains an arbitrary serialized message along with a @type that
+        describes the type of the serialized message.
+      properties:
+        '@type':
+          description: The type of the serialized message.
+          type: string
+      type: object
+    LocalTenantProfileAssignmentRequestDTO:
+      example:
+        targetUserIds:
+        - targetUserIds
+        - targetUserIds
+        validityEndTime: validityEndTime
+        validityStartTime: validityStartTime
+      properties:
+        targetUserIds:
+          description: A list of users to assign this profile.
+          items:
+            type: string
+          type: array
+        validityStartTime:
+          description: An inclusive date-time when this profile is active.
+          type: string
+        validityEndTime:
+          description: An exclusive date-time when this profile is no longer active.
+          type: string
+      type: object
+    LocalTenantProfileAssignmentResponseDTO:
+      example:
+        failedAssignments:
+        - error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          userId: userId
+        - error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          userId: userId
+        successfulAssignments:
+        - userId: userId
+        - userId: userId
+        badUserIds:
+        - error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          userId: userId
+        - error:
+            rootCauseId: rootCauseId
+            errorMessage: errorMessage
+            errorCode: errorCode
+          userId: userId
+        errors: true
+      properties:
+        errors:
+          description: "If true, an error was generated by the request."
+          type: boolean
+        badUserIds:
+          description: A list of objects representing the user IDs that may not be
+            valid.
+          items:
+            $ref: '#/components/schemas/UserIdErrorDTO'
+          type: array
+        failedAssignments:
+          description: A list of objects representing any errors that occurred during
+            the assignment operation.
+          items:
+            $ref: '#/components/schemas/FailedLocalTenantProfileAssignmentDTO'
+          type: array
+        successfulAssignments:
+          description: A list of the user IDs that were successfully assigned the
+            profile.
+          items:
+            $ref: '#/components/schemas/SuccessfulLocalTenantProfileAssignmentDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    LocalTenantProfileRevokeRequestDTO:
+      example:
+        targetUserIds:
+        - targetUserIds
+        - targetUserIds
+      properties:
+        targetUserIds:
+          description: A list of users to remove this profile from.
+          items:
+            type: string
+          type: array
+      type: object
+    LocalTenantProfileRevokeResponseDTO:
+      example:
+        failed:
+        - message: message
+          userId: userId
+        - message: message
+          userId: userId
+        succeeded:
+        - userId: userId
+        - userId: userId
+      properties:
+        failed:
+          description: A list of objects representing any errors that occurred during
+            the assignment operation.
+          items:
+            $ref: '#/components/schemas/FailedLocalTenantProfileRevokeDTO'
+          type: array
+        succeeded:
+          description: A list of the user IDs that successfully had a profile removed.
+          items:
+            $ref: '#/components/schemas/SuccessfulLocalTenantProfileAssignmentDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    ProfileAssignedForAccessibleTenantDTO:
+      example:
+        profileId: profileId
+        displayName: displayName
+        validityEndTime: validityEndTime
+        validityStartTime: validityStartTime
+        tenantCode: tenantCode
+        forAllChildren: true
+      properties:
+        profileId:
+          description: The unique identifier associated with the profile.
+          type: string
+        displayName:
+          description: An identifiable profile name to display in Visier such as "Partner
+            Service Manager".
+          type: string
+        tenantCode:
+          description: The tenant code of the analytic tenant on which this profile
+            is assigned.
+          type: string
+        forAllChildren:
+          description: "If true, the profile is assigned for all the analytic tenants\
+            \ of the administrating tenant."
+          type: boolean
+        validityStartTime:
+          description: |-
+            An inclusive date-time when this profile is active.
+
+             Note: Long.Min_Value means that startTime is undefined.
+          type: string
+        validityEndTime:
+          description: |-
+            An exclusive date-time when this profile is no longer active.
+
+             Note: Long.Max_Value means that endTime is undefined and is equivalent to permanent access.
+          type: string
+      type: object
+    ProfileAssignedForLocalTenantDTO:
+      example:
+        capabilities:
+        - capability: capability
+          accessLevel: accessLevel
+          viewLevel: viewLevel
+        - capability: capability
+          accessLevel: accessLevel
+          viewLevel: viewLevel
+        profileId: profileId
+        displayName: displayName
+        validityEndTime: validityEndTime
+        validityStartTime: validityStartTime
+        additionalCapabilities:
+          additionalCapabilities:
+          - additionalCapabilities
+          - additionalCapabilities
+      properties:
+        profileId:
+          description: The unique identifier associated with the profile.
+          type: string
+        displayName:
+          description: "An identifiable profile name to display in Visier, such as\
+            \ \"Partner Service Manager\"."
+          type: string
+        validityStartTime:
+          description: An inclusive date-time when this profile is active.
+          type: string
+        validityEndTime:
+          description: An exclusive date-time when this profile is no longer active.
+          type: string
+        capabilities:
+          description: A list of objects representing the access that this profile
+            has for the capabilities of this profile.
+          items:
+            $ref: '#/components/schemas/CapabilitiesDTO'
+          type: array
+        additionalCapabilities:
+          $ref: '#/components/schemas/AdditionalCapabilitiesDTO'
+      type: object
+      x-konfig-properties:
+        additionalCapabilities:
+          description: A list of the additional capabilities that are assigned to
+            this profile.
+    ProfileGetAPIResponseDTO:
+      example:
+        capabilities:
+        - capability: capability
+          accessLevel: accessLevel
+          viewLevel: viewLevel
+        - capability: capability
+          accessLevel: accessLevel
+          viewLevel: viewLevel
+        profileId: profileId
+        displayName: displayName
+        additionalCapabilities:
+        - additionalCapabilities
+        - additionalCapabilities
+      properties:
+        profileId:
+          description: The unique identifier associated with the profile.
+          type: string
+        displayName:
+          description: "An identifiable profile name to display in Visier. For example,\
+            \ \"Partner Service Manager\"."
+          type: string
+        capabilities:
+          description: A list of objects representing the access that this profile
+            has for the capabilities of this profile.
+          items:
+            $ref: '#/components/schemas/CapabilitiesDTO'
+          type: array
+        additionalCapabilities:
+          description: A list of the additional capabilities that are assigned to
+            this profile.
+          items:
+            type: string
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    ProfilesGetAPIResponseDTO:
+      example:
+        profiles:
+        - capabilities:
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          profileId: profileId
+          displayName: displayName
+          additionalCapabilities:
+          - additionalCapabilities
+          - additionalCapabilities
+        - capabilities:
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          - capability: capability
+            accessLevel: accessLevel
+            viewLevel: viewLevel
+          profileId: profileId
+          displayName: displayName
+          additionalCapabilities:
+          - additionalCapabilities
+          - additionalCapabilities
+      properties:
+        profiles:
+          description: A list of objects representing the available profiles.
+          items:
+            $ref: '#/components/schemas/ProfileGetAPIResponseDTO'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    ReducedErrorDTO:
+      example:
+        errorMessage: errorMessage
+      properties:
+        errorMessage:
+          description: A meaningful message for the end user.
+          type: string
+      type: object
+    ReducedTenantCodeErrorDTO:
+      example:
+        tenantCode: tenantCode
+        error:
+          errorMessage: errorMessage
+        forAllChildren: true
+      properties:
+        tenantCode:
+          description: The bad tenant code.
+          type: string
+        forAllChildren:
+          description: "If true, the assignment is for all the analytic tenants of\
+            \ the specified tenant."
+          type: boolean
+        error:
+          $ref: '#/components/schemas/ReducedErrorDTO'
+      type: object
+      x-konfig-properties:
+        error:
+          description: The details about the error.
+    ReducedUserIdErrorDTO:
+      example:
+        error:
+          errorMessage: errorMessage
+        userId: userId
+      properties:
+        userId:
+          description: The bad user ID.
+          type: string
+        error:
+          $ref: '#/components/schemas/ReducedErrorDTO'
+      type: object
+      x-konfig-properties:
+        error:
+          description: The details about the error.
+    Status:
+      description: "The `Status` type defines a logical error model that is suitable\
+        \ for different programming environments, including REST APIs and RPC APIs.\
+        \ It is used by [gRPC](https://github.com/grpc). Each `Status` message contains\
+        \ three pieces of data: error code, error message, and error details. You\
+        \ can find out more about this error model and how to work with it in the\
+        \ [API Design Guide](https://cloud.google.com/apis/design/errors)."
+      properties:
+        code:
+          description: "The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code]."
+          format: int32
+          type: integer
+        message:
+          description: "A developer-facing error message, which should be in English.\
+            \ Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details]\
+            \ field, or localized by the client."
+          type: string
+        details:
+          description: A list of messages that carry the error details.  There is
+            a common set of message types for APIs to use.
+          items:
+            $ref: '#/components/schemas/GoogleProtobufAny'
+          type: array
+      type: object
+      x-konfig-is-used-in-successful-response: true
+    SuccessfulAccessibleTenantProfileAssignmentDTO:
+      example:
+        tenantCode: tenantCode
+        userId: userId
+        forAllChildren: true
+      properties:
+        userId:
+          description: The user ID.
+          type: string
+        tenantCode:
+          description: The tenant code.
+          type: string
+        forAllChildren:
+          description: "If true, the target assignment is for all analytic tenants."
+          type: boolean
+      type: object
+    SuccessfulLocalTenantProfileAssignmentDTO:
+      example:
+        userId: userId
+      properties:
+        userId:
+          description: The user ID.
+          type: string
+      type: object
+    TargetTenantCodeDTO:
+      example:
+        tenantCode: tenantCode
+        forAllChildren: true
+      properties:
+        tenantCode:
+          description: The tenant code.
+          type: string
+        forAllChildren:
+          description: "If true, the assignment is for all the analytic tenants of\
+            \ the specified tenant."
+          type: boolean
+      type: object
+    TenantCodeErrorDTO:
+      example:
+        tenantCode: tenantCode
+        error:
+          rootCauseId: rootCauseId
+          errorMessage: errorMessage
+          errorCode: errorCode
+        forAllChildren: true
+      properties:
+        tenantCode:
+          description: The bad tenant code.
+          type: string
+        forAllChildren:
+          description: "If true, the target assignment is for all analytic tenants."
+          type: boolean
+        error:
+          $ref: '#/components/schemas/ErrorDTO'
+      type: object
+      x-konfig-properties:
+        error:
+          description: The details about the error.
+    UserIdErrorDTO:
+      example:
+        error:
+          rootCauseId: rootCauseId
+          errorMessage: errorMessage
+          errorCode: errorCode
+        userId: userId
+      properties:
+        userId:
+          description: The bad user ID.
+          type: string
+        error:
+          $ref: '#/components/schemas/ErrorDTO'
+      type: object
+      x-konfig-properties:
+        error:
+          description: The details about the error.
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-profiles:
+      properties: {}
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-profiles-accessible-tenants:
+      properties: {}
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter: []
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-profiles-accessible-tenants-profileId:
+      properties:
+        profileId:
+          type: string
+      required:
+      - profileId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - profileId
+    konfig-generated-schema-single-parameter-schema-put--v1-admin-profiles-accessible-tenants-profileId-assign:
+      properties:
+        profileId:
+          type: string
+        targetUserIds:
+          description: A list of users to assign this profile.
+          items:
+            type: string
+          type: array
+        targetTenantCodes:
+          description: A list of objects representing the  analytic tenants for profiles
+            assigned to the users.
+          items:
+            $ref: '#/components/schemas/TargetTenantCodeDTO'
+          type: array
+        validityStartTime:
+          description: An inclusive date-time when this profile is active.
+          type: string
+        validityEndTime:
+          description: An exclusive date-time when this profile is no longer active.
+          type: string
+      required:
+      - profileId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - profileId
+    konfig-generated-schema-single-parameter-schema-delete--v1-admin-profiles-accessible-tenants-profileId-remove:
+      properties:
+        profileId:
+          type: string
+        targetUserIds:
+          description: A list of users to remove this profile from.
+          items:
+            type: string
+          type: array
+        targetTenantCodes:
+          description: A list of objects representing the  analytic tenants for removing
+            profiles from each target user ID.
+          items:
+            $ref: '#/components/schemas/TargetTenantCodeDTO'
+          type: array
+      required:
+      - profileId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - profileId
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-profiles-profileId:
+      properties:
+        profileId:
+          type: string
+      required:
+      - profileId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - profileId
+    konfig-generated-schema-single-parameter-schema-put--v1-admin-profiles-profileId-assign:
+      properties:
+        profileId:
+          type: string
+        targetUserIds:
+          description: A list of users to assign this profile.
+          items:
+            type: string
+          type: array
+        validityStartTime:
+          description: An inclusive date-time when this profile is active.
+          type: string
+        validityEndTime:
+          description: An exclusive date-time when this profile is no longer active.
+          type: string
+      required:
+      - profileId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - profileId
+    konfig-generated-schema-single-parameter-schema-delete--v1-admin-profiles-profileId-remove:
+      properties:
+        profileId:
+          type: string
+        targetUserIds:
+          description: A list of users to remove this profile from.
+          items:
+            type: string
+          type: array
+      required:
+      - profileId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - profileId
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users-userId-accessible-tenant-profiles:
+      properties:
+        userId:
+          type: string
+      required:
+      - userId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - userId
+    konfig-generated-schema-single-parameter-schema-get--v1-admin-users-userId-profiles:
+      properties:
+        userId:
+          type: string
+      required:
+      - userId
+      type: object
+      x-do-not-generate: true
+      x-konfig-is-parameter:
+      - userId
+  securitySchemes:
+    CookieAuth:
+      in: cookie
+      name: VisierASIDToken
+      type: apiKey
+      x-konfig-globally-required-security: false
+    ApiKeyAuth:
+      in: header
+      name: apikey
+      type: apiKey
+      x-konfig-globally-required-security: true
+    BearerAuth:
+      scheme: bearer
+      type: http
+      x-konfig-globally-required-security: false
+    OAuth2Auth:
+      flows:
+        authorizationCode:
+          authorizationUrl: /v1/auth/oauth2/authorize
+          scopes:
+            read: Grants read access
+            write: Grants write access
+          tokenUrl: /v1/auth/oauth2/token
+        password:
+          scopes:
+            read: Grants read access
+            write: Grants write access
+          tokenUrl: /v1/auth/oauth2/token
+      type: oauth2
+      x-konfig-globally-required-security: false
+
